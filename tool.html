@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JSONP Viewer</title>
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="content_style.css">
+  <script>
+window.isToolPage = true;
+  </script>
+  <script type="text/javascript" src="content_script.js"></script>
+  <style type="text/css">
+	textarea{width: 98%;height:100px;}
+	button{padding:1em 2em;margin-bottom:1em;}
+  </style>
+</head>
+<body>
+<p>Input The JSON Data:</p>
+<textarea name="code" id="code"></textarea>
+<button onclick="showTree()">Analyse</button> 
+<div id="info" class="info">Press button to analyse JSON data.</div> 
+<div id="tree" class="tree"></div>
+</body>
+</html>
