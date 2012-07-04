@@ -3,7 +3,7 @@ ul,li{list-style: none;}
 ul{margin:0;padding:0 0 0 2em;}
 
 .info{background-color:#eee;color:#333;padding:.5em 1em;margin:1em 0;}
-.info strong{color:black;}
+.info strong.em{color:purple;}
 .tree{white-space:nowrap;}
 .tree strong{color:purple;font-weight: normal;}
 .tree li{position: relative;}

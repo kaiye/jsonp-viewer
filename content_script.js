@@ -14,10 +14,15 @@ function isArray(o){
 	}
 	return false;
 }
+function htmlEncode(str) {
+    var div = document.createElement("div");
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
 
 function getPageData(){
 	var str;
-	str = (str = document.getElementsByTagName('pre')[0]) ? str.childNodes[0].nodeValue : document.body.childNodes[0].nodeValue;
+	str = (str = document.getElementsByTagName('pre')[0]) ? str.textContent : document.body.textContent;
 	return str;
 }
 
@@ -40,23 +45,43 @@ function checkDataFormat(str,func){
 	//unstrict json format
 	}catch(e){	
 		try{
-			var callbackFunc = str.match(/[\w\s]+(?=\()/ig)[0].trim();
+			var callbackFunc = str.match(/[\.\w\s]+(?=\()/ig)[0].trim();
+
 			if(callbackFunc.length > 0){
-				window[callbackFunc] = function(obj){
+				var callback = function(obj){
 					cgi.callbackData = obj;
 					cgi.callbackFunc = callbackFunc;
 					cgi.format = 'JSONP';
-					func(false);
+					func(false);				
+				}
+				//如果是带命名空间的回调函数
+				if(callbackFunc.indexOf('.')>-1){
+					var arr = callbackFunc.split('.'),
+						parent = window;
+					for(var i=0, len= arr.length;i<len;i++){
+						if(i === len - 1){
+							console.log(callback);
+							parent[arr[i]] = callback;
+
+						}else{
+							parent = parent[arr[i]] = {};
+						}
+					}
+				}else{
+					
+					window[callbackFunc] = callback;
 				}
 				eval(" " + str);
 			}
 		//jsonp
 		}catch(e){
+			//console.log(e);
 			try{
 				cgi.callbackData = eval('(' + str +')');
 				cgi.format = 'JSON-unstrict';
 				func(false);
 			}catch(e){
+				
 				func(true);
 			}
 		}
@@ -116,7 +141,7 @@ function loadStatic(){
 function showResult(){
 	var html = '';
 	if(cgi.format !== ''){
-		html = 'Format: <strong>' + cgi.format + '</strong>' +(cgi.format == 'JSONP' ? ', callback: <strong>' + cgi.callbackFunc + '</strong>':'') + '.';
+		html = 'Format: <strong>' + cgi.format + '</strong>' +(cgi.format == 'JSONP' ? ', callback: <strong class="em">' + cgi.callbackFunc + '</strong>':'') + '.';
 		if(window.isToolPage){
 			document.getElementById('info').innerHTML = html;
 			document.getElementById('tree').innerHTML = buildDom(cgi.callbackData,'obj');
@@ -149,7 +174,7 @@ function buildDom(o,literal){
 			return '<span class="operator">-</span><div class="group">{<ul class="' + type +'">'+ html.replace(/,<\/li>$/,'<\/li>') + '</ul>}</div><div class="summary">Object</div>';
 			break;
 		case 'string':
-			return '<span class="value ' + type + '">"' + (/^https?\:(\/\/).*$/i.test(o)? '<a href="' + o +'" target="_blank">' + o + '</a>': o )+ '"</span>';
+			return '<span class="value ' + type + '">"' + (/^https?\:(\/\/).*$/i.test(o)? '<a href="' + o +'" target="_blank">' + o + '</a>': htmlEncode(o) )+ '"</span>';
 			break;
 		default :
 			return '<span class="value ' + type + '">'+ o + '</span>';
