@@ -60,7 +60,6 @@ function checkDataFormat(str,func){
 						parent = window;
 					for(var i=0, len= arr.length;i<len;i++){
 						if(i === len - 1){
-							console.log(callback);
 							parent[arr[i]] = callback;
 
 						}else{
@@ -75,7 +74,6 @@ function checkDataFormat(str,func){
 			}
 		//jsonp
 		}catch(e){
-			//console.log(e);
 			try{
 				cgi.callbackData = eval('(' + str +')');
 				cgi.format = 'JSON-unstrict';
@@ -159,7 +157,7 @@ function buildDom(o,literal){
 	switch(type){
 		case 'array' :
 			for(var i=0,len = o.length;i<len;i++){
-				html += '<li title="'+ literal+ '['+ i +']"><strong>' + i + '</strong>:' + buildDom(o[i],literal + '[' + i + ']') + ',</li>';
+				html += '<li title=\''+ literal+ '['+ i +']\'><strong>' + i + '</strong>:' + buildDom(o[i],literal + '[' + i + ']') + ',</li>';
 			} 
 			return '<span class="operator">-</span><div class="group">[<ul class="' + type +'">'+ html.replace(/,<\/li>$/,'<\/li>') + '</ul>]</div><div class="summary">Array['+ len +']</div>';
 			break;
@@ -168,7 +166,12 @@ function buildDom(o,literal){
 			var keys = Object.keys(o);
 			keys.sort();
 			for(var i = 0, l = keys.length; i < l; i++) {
-				html += '<li title="'+ literal +'.'+ keys[i] +'"><strong>' + keys[i] + '</strong>:' + buildDom(o[keys[i]],literal + '.' + keys[i]) +  ',</li>';
+				//如果属性值是数字，则做引号处理
+				if(/^\d+$/.test(keys[i])){
+					html += '<li title=\''+ literal +'["'+ keys[i] +'"]\'><strong>"' + keys[i] + '"</strong>:' + buildDom(o[keys[i]],literal + '["' + keys[i] + '"]') +  ',</li>';
+				}else{
+					html += '<li title=\''+ literal +'.'+ keys[i] +'\'><strong>' + keys[i] + '</strong>:' + buildDom(o[keys[i]],literal + '.' + keys[i]) +  ',</li>';	
+				}
 			}
 			//remove last comma
 			return '<span class="operator">-</span><div class="group">{<ul class="' + type +'">'+ html.replace(/,<\/li>$/,'<\/li>') + '</ul>}</div><div class="summary">Object</div>';
