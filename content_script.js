@@ -1,4 +1,4 @@
-//当前cgi的信息
+//gobal data
 var cgi = {
 	"pageData" : "",
 	"callbackFunc" : "",
@@ -23,6 +23,7 @@ function htmlEncode(str) {
 function getPageData(){
 	var str;
 	str = (str = document.getElementsByTagName('pre')[0]) ? str.textContent : document.body.textContent;
+
 	return str;
 }
 
@@ -37,55 +38,62 @@ function showTree(){
 }
 function checkDataFormat(str,func){
 	cgi.pageData = str;
+
+	//remove specific string to avoid crash
+	str = str.replace(/while[\s\(]+(1|true)[\s\)]+;/ig,'');
+
 	//json format
 	try{
 		cgi.callbackData = JSON.parse(str);
 		cgi.format = 'JSON';
-		func(false);	
-	//unstrict json format
+		func(false);
 	}catch(e){	
+		//unstrict json format
 		try{
-			var callbackFunc = str.match(/[\.\w\s]+(?=\()/ig)[0].trim();
-
-			if(callbackFunc.length > 0){
-				var callback = function(obj){
-					cgi.callbackData = obj;
-					cgi.callbackFunc = callbackFunc;
-					cgi.format = 'JSONP';
-					func(false);				
-				}
-				//如果是带命名空间的回调函数
-				if(callbackFunc.indexOf('.')>-1){
-					var arr = callbackFunc.split('.'),
-						parent = window;
-					for(var i=0, len= arr.length;i<len;i++){
-						if(i === len - 1){
-							parent[arr[i]] = callback;
-
-						}else{
-							parent = parent[arr[i]] = {};
-						}
-					}
-				}else{
-					
-					window[callbackFunc] = callback;
-				}
-				eval(" " + str);
-			}
+			cgi.callbackData = eval('(' + str +')');
+			cgi.format = 'JSON-unstrict';
+			func(false);
 		//jsonp
 		}catch(e){
 			try{
-				cgi.callbackData = eval('(' + str +')');
-				cgi.format = 'JSON-unstrict';
-				func(false);
+				var callbackFunc = str.match(/[\.\w\s]+(?=\()/ig)[0].trim();
+				if(callbackFunc.length > 0){
+					var callback = function(obj){
+						cgi.callbackData = obj;
+						cgi.callbackFunc = callbackFunc;
+						cgi.format = 'JSONP';
+						func(false);				
+					}
+					//if function with namespace 
+					if(callbackFunc.indexOf('.')>-1){
+						var arr = callbackFunc.split('.'),
+							parent = window;
+						for(var i=0, len= arr.length;i<len;i++){
+							if(i === len - 1){
+								parent[arr[i]] = callback;
+
+							}else{
+								parent = parent[arr[i]] = {};
+							}
+						}
+					}else{
+						
+						window[callbackFunc] = callback;
+					}
+					eval(" " + str);
+				}else{
+					func(true);
+				}
+			//unknown type
 			}catch(e){
-				
-				func(true);
+				func(true);	
 			}
+			
 		}
+
 	}	
 }
-//获取当前页面数据
+//get current page data
 (function(){	
 	if(window.isToolPage){
 		window.onload = bindEvents;
@@ -135,23 +143,25 @@ function loadStatic(){
 	document.getElementsByTagName('head')[0].appendChild(link);
 }
 
-//展示最后结果
+//show data tree
 function showResult(){
 	var html = '';
 	if(cgi.format !== ''){
+		var dataType = isArray(cgi.callbackData) ? 'arr' : 'obj';
 		html = 'Format: <strong>' + cgi.format + '</strong>' +(cgi.format == 'JSONP' ? ', callback: <strong class="em">' + cgi.callbackFunc + '</strong>':'') + '.';
 		if(window.isToolPage){
 			document.getElementById('info').innerHTML = html;
-			document.getElementById('tree').innerHTML = buildDom(cgi.callbackData,'obj');
+			document.getElementById('tree').innerHTML = buildDom(cgi.callbackData, dataType);
 		}else{
 			html ='<p class="info">' + html + ' <a target="_blank" href="view-source:'+ window.location.href +'">View source</a></p>';
-			document.body.innerHTML = html + '<div id="tree" class="tree">' + buildDom(cgi.callbackData,'obj') + '</div>';
+			document.body.innerHTML = html + '<div id="tree" class="tree">' + buildDom(cgi.callbackData, dataType) + '</div>';
 		}	
 	}
 }
-//输出DOM结构
+//build dom html
 function buildDom(o,literal){
-	var type = isArray(o) ? 'array' : typeof o,
+	// null object
+	var type = o === null ? 'null' : isArray(o) ? 'array' : typeof o,
 		html = '';
 
 	switch(type){
@@ -166,7 +176,7 @@ function buildDom(o,literal){
 			var keys = Object.keys(o);
 			keys.sort();
 			for(var i = 0, l = keys.length; i < l; i++) {
-				//如果属性值是数字，则做引号处理
+				//quote numeric property
 				if(/^\d+$/.test(keys[i])){
 					html += '<li title=\''+ literal +'["'+ keys[i] +'"]\'><strong>"' + keys[i] + '"</strong>:' + buildDom(o[keys[i]],literal + '["' + keys[i] + '"]') +  ',</li>';
 				}else{
