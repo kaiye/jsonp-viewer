@@ -1,13 +1,13 @@
 {
   "name": "JSONP Viewer",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "manifest_version": 2,
   "description": "Analyse a JSON-like document in Chrome",
   "background": {
     "scripts": ["background.js"]
   },
   "web_accessible_resources": ["content_style.css", "tool.html"],
-  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {
     "default_icon": "icon_019.png"
   },
