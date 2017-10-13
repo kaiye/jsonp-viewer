@@ -6,8 +6,8 @@
   "background": {
     "scripts": ["background.js"]
   },
-	"web_accessible_resources": ["content_style.css", "tool.html"],
-	"content_security_policy":"script-src 'self'; object-src 'self'",
+  "web_accessible_resources": ["content_style.css", "tool.html"],
+  "content_security_policy": "script-src 'self'; object-src 'self'",
   "browser_action": {
     "default_icon": "icon_019.png"
   },
