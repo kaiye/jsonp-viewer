@@ -1,13 +1,10 @@
 <!doctype html>
-<html>
+<html tag="isToolPage" >
 <head>
   <meta charset="utf-8">
   <title>JSONP Viewer</title>
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="content_style.css">
-  <script>
-window.isToolPage = true;
-  </script>
   <script type="text/javascript" src="content_script.js"></script>
   <style type="text/css">
 	textarea{width: 98%;height:100px;}
@@ -17,7 +14,7 @@ window.isToolPage = true;
 <body>
 <p>Input The JSON Data:</p>
 <textarea name="code" id="code"></textarea>
-<button onclick="showTree()">Analyse</button> 
+<button id="button">Analyse</button> 
 <div id="info" class="info">Press button to analyse JSON data.</div> 
 <div id="tree" class="tree"></div>
 </body>

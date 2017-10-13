@@ -95,7 +95,8 @@ function checkDataFormat(str,func){
 }
 //get current page data
 (function(){	
-	if(window.isToolPage){
+	if(document.querySelector('html').getAttribute('tag') === 'isToolPage'){
+		window.isToolPage = true;
 		window.onload = bindEvents;
 		return;
 	}
@@ -121,6 +122,7 @@ function checkDataFormat(str,func){
 
 function bindEvents(){
 	var tree = document.getElementById('tree');
+	var button = document.getElementById('button');
 	tree.onclick = function(e){
 		var src = e.srcElement;
 		if(src.className === 'operator' ){
@@ -131,6 +133,11 @@ function bindEvents(){
 				src.parentNode.className =  'close';
 				src.innerHTML = '+';
 			}	
+		}
+	}
+	if(button){
+		button.onclick= function(){
+			showTree() 
 		}
 	}
 }
