@@ -153,7 +153,7 @@ function showResult(){
 			document.getElementById('info').innerHTML = html;
 			document.getElementById('tree').innerHTML = buildDom(cgi.callbackData, dataType);
 		}else{
-			html ='<p class="info">' + html + ' <a target="_blank" href="view-source:'+ window.location.href +'">View source</a></p>';
+			html ='<p class="info">' + html + ' <a target="_blank" href="'+ window.location.href+'">View source</a></p>';
 			document.body.innerHTML = html + '<div id="tree" class="tree">' + buildDom(cgi.callbackData, dataType) + '</div>';
 		}	
 	}

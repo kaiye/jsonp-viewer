@@ -6,6 +6,11 @@ JSONP Viewer is a developer tool to help you analyse a JSON-like data, and also 
 [Install it from Chrome Web Store](https://chrome.google.com/webstore/detail/mijkjfpdiidomhagijpedgaeekkadlgp/details)
 
 ## Change Log
+
+### v1.1.7
+* 更新为 manifest_version 2
+* 移除 view source 链接
+
 ### v1.1.6
 * 修复值为null时无法处理的BUG
 * 修复某些情况下数据格式未报异常的BUG
