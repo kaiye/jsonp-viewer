@@ -7,6 +7,12 @@ JSONP Viewer is a developer tool to help you analyse a JSON-like data, and also 
 
 ## Change Log
 
+### v1.1.9
+* 支持新标签页状态下点击 icon 直接开启
+
+### v1.1.8
+* 开启 CSP script-src 'unsafe-eval' 用于解析 jsonp 格式
+
 ### v1.1.7
 * 更新为 manifest_version 2
 * 移除 view source 链接
