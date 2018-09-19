@@ -260,7 +260,7 @@ function buildDom(o, literal) {
         '<span class="value ' +
         type +
         '">"' +
-        (/^https?\:(\/\/).*$/i.test(o)
+        (/^(https?\:)?\/\/\w+(\.\w+)+.*$/i.test(o)
           ? '<a href="' + o + '" target="_blank">' + o + '</a>'
           : htmlEncode(o)) +
         '"</span>'
