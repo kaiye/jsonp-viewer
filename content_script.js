@@ -261,7 +261,7 @@ function buildDom(o, literal) {
         type +
         '">"' +
         (/^(https?\:)?\/\/\w+(\.\w+)+.*$/i.test(o)
-          ? '<a href="' + o + '" target="_blank">' + o + '</a>'
+          ? '<a href="' + o.replace(/^\/\//,'https://') + '" target="_blank">' + o + '</a>'
           : htmlEncode(o)) +
         '"</span>'
       )

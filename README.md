@@ -7,6 +7,9 @@ JSONP Viewer is a developer tool to help you analyse a JSON-like data, and also 
 
 ## Change Log
 
+### v1.1.11
+* 修复插件工具页中无法打开 // 协议的 bug
+
 ### v1.1.10
 * 为不带 http/https 前缀，以 // 开头的 URL 添加点击链接
 
